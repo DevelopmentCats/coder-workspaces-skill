@@ -113,12 +113,12 @@ coder tasks connect <task-name>            # Interactive session
 
 ### Task States
 
-Tasks take 1-3 minutes to start:
-
-- **Initializing** (30-120s): Workspace provisioning
+- **Initializing**: Workspace provisioning (timing varies by template)
 - **Working**: Setup script running
 - **Active**: Agent processing your prompt
 - **Idle**: Agent waiting for input
+
+Startup time depends on the template — simple templates may take ~10-15 seconds, complex ones with setup scripts take longer.
 
 ## Troubleshooting
 

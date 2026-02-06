@@ -7,6 +7,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [1.5.1] - 2026-02-06
+
+### Changed
+- Task states timing now notes dependency on template configuration
+
 ## [1.5.0] - 2026-02-06
 
 ### Removed
