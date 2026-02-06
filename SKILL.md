@@ -19,9 +19,9 @@ Manage Coder workspaces and AI coding agent tasks via the coder CLI.
 
 The coder CLI must be installed and authenticated. If commands fail:
 
-- **CLI not found**: See [Coder CLI docs](https://coder.com/docs/install/cli) for install instructions from `$CODER_URL`
+- **CLI not found**: See [Coder CLI docs](https://coder.com/docs/install/cli) for install options
 - **Auth failed**: Run `coder login --token "$CODER_SESSION_TOKEN" "$CODER_URL"`
-- **Version mismatch**: Reinstall CLI from `$CODER_URL` to match server version. See [Coder CLI docs](https://coder.com/docs/install/cli)
+- **Version mismatch**: Reinstall CLI to match server version. See [Coder CLI docs](https://coder.com/docs/install/cli)
 
 Verify with:
 ```bash
