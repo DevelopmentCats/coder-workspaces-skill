@@ -13,20 +13,24 @@ metadata:
 
 Manage Coder workspaces and AI coding agent tasks via the coder CLI.
 
-> Note: Commands like `coder ssh` execute within isolated, governed Coder workspaces — not the host system. Authentication tokens are standard Coder CLI requirements.
+> Note: Commands execute within isolated, governed Coder workspaces — not the host system.
 
-## Requirements
+## Setup
 
-The coder CLI must be installed and authenticated. If commands fail:
+Before using coder CLI, configure authentication:
 
-- **CLI not found**: See [Coder CLI docs](https://coder.com/docs/install/cli) for install options
-- **Auth failed**: Run `coder login --token "$CODER_SESSION_TOKEN" "$CODER_URL"`
-- **Version mismatch**: Reinstall CLI to match server version. See [Coder CLI docs](https://coder.com/docs/install/cli)
+1. Install the CLI from [Coder CLI docs](https://coder.com/docs/install/cli)
 
-Verify with:
-```bash
-coder whoami
-```
+2. Set environment variables:
+   ```bash
+   export CODER_URL=https://your-coder-instance.com
+   export CODER_SESSION_TOKEN=<your-token>  # Get from /cli-auth
+   ```
+
+3. Test connection:
+   ```bash
+   coder whoami
+   ```
 
 ## Workspace Commands
 
@@ -41,7 +45,7 @@ coder restart <workspace> -y
 coder delete <workspace> -y
 
 coder ssh <workspace>                   # Interactive shell
-coder ssh <workspace> -- <command>      # Run command
+coder ssh <workspace> -- <command>      # Run command in workspace
 
 coder logs <workspace>
 coder logs <workspace> -f               # Follow logs
@@ -57,8 +61,8 @@ Coder Tasks runs AI agents (Claude Code, Aider, etc.) in isolated workspaces.
 coder tasks create --template <template> --preset "<preset>" "prompt"
 ```
 
-- **Template**: Required. List available with `coder templates list`
-- **Preset**: May be required depending on template. Try without first. If task creation fails with "Required parameter not provided", get presets with `coder templates presets list <template> -o json` and use the default (`"Default": true`). If no default exists, ask user which preset to use.
+- **Template**: Required. List with `coder templates list`
+- **Preset**: May be required. Try without first. If creation fails with "Required parameter not provided", get presets with `coder templates presets list <template> -o json` and use the default. If no default, ask user which preset.
 
 ### Managing Tasks
 
@@ -75,6 +79,12 @@ coder tasks delete <task-name> -y       # Delete task
 - **Working**: Setup script running
 - **Active**: Agent processing prompt
 - **Idle**: Agent waiting for input
+
+## Troubleshooting
+
+- **CLI not found**: See [Coder CLI docs](https://coder.com/docs/install/cli)
+- **Auth failed**: Verify CODER_URL and CODER_SESSION_TOKEN are set, then run `coder login`
+- **Version mismatch**: Reinstall CLI from your Coder instance
 
 ## More Info
 

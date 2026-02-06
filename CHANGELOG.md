@@ -7,6 +7,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [1.5.5] - 2026-02-06
+
+### Changed
+- Restructured skill to follow standard CLI documentation patterns
+- Setup section now shows environment configuration (matches hass-cli style)
+- Commands no longer reference environment variables directly
+
 ## [1.5.4] - 2026-02-06
 
 ### Changed
