@@ -24,17 +24,30 @@ jobs:
         id: version
         run: echo "VERSION=${GITHUB_REF#refs/tags/v}" >> $GITHUB_OUTPUT
 
-      - name: Generate changelog from tag message
+      - name: Extract changelog for version
         id: changelog
         run: |
-          # Get the tag annotation message (if annotated tag)
-          TAG_MESSAGE=$(git tag -l --format='%(contents)' ${GITHUB_REF#refs/tags/} 2>/dev/null || echo "")
-          if [ -z "$TAG_MESSAGE" ]; then
-            TAG_MESSAGE="Release ${{ steps.version.outputs.VERSION }}"
+          VERSION="${{ steps.version.outputs.VERSION }}"
+          
+          # Extract the section for this version from CHANGELOG.md
+          # Looks for ## [X.Y.Z] and captures until the next ## [ or end of file
+          CHANGELOG=$(awk -v ver="$VERSION" '
+            /^## \[/ {
+              if (found) exit
+              if ($0 ~ "\\[" ver "\\]") found=1
+              next
+            }
+            found { print }
+          ' CHANGELOG.md)
+          
+          # Fallback if no changelog found
+          if [ -z "$CHANGELOG" ]; then
+            CHANGELOG="Release v$VERSION"
           fi
-          # Escape for GitHub Actions
+          
+          # Output for GitHub Actions (handle multiline)
           echo "CHANGELOG<<EOF" >> $GITHUB_OUTPUT
-          echo "$TAG_MESSAGE" >> $GITHUB_OUTPUT
+          echo "$CHANGELOG" >> $GITHUB_OUTPUT
           echo "EOF" >> $GITHUB_OUTPUT
 
       - name: Publish to ClawHub
@@ -48,6 +61,14 @@ jobs:
             --version "${{ steps.version.outputs.VERSION }}" \
             --changelog "${{ steps.changelog.outputs.CHANGELOG }}"
 
+      - name: Create GitHub Release
+        uses: softprops/action-gh-release@v1
+        with:
+          body: ${{ steps.changelog.outputs.CHANGELOG }}
+          generate_release_notes: false
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
       - name: Summary
         run: |
           echo "## ✅ Published to ClawHub" >> $GITHUB_STEP_SUMMARY
@@ -55,3 +76,6 @@ jobs:
           echo "- **Skill:** coder-workspaces" >> $GITHUB_STEP_SUMMARY
           echo "- **Version:** ${{ steps.version.outputs.VERSION }}" >> $GITHUB_STEP_SUMMARY
           echo "- **View:** https://clawhub.ai/skills/coder-workspaces" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "### Changelog" >> $GITHUB_STEP_SUMMARY
+          echo "${{ steps.changelog.outputs.CHANGELOG }}" >> $GITHUB_STEP_SUMMARY
