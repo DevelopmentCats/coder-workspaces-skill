@@ -7,6 +7,16 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [1.5.2] - 2026-02-06
+
+### Changed
+- Rewrote skill for agent (not user) as audience
+- Agent now attempts CLI install/auth fixes before asking user
+- Preset handling: try without, use default if exists, ask user only if needed
+
+### Removed
+- Brew install metadata (agent learns install from Coder docs)
+
 ## [1.5.1] - 2026-02-06
 
 ### Changed
