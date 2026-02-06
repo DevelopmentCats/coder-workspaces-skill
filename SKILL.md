@@ -13,14 +13,13 @@ metadata:
 
 Manage Coder workspaces and AI coding agent tasks via the coder CLI.
 
-The coder CLI must be installed and authenticated before using this skill. See README for setup.
+## Troubleshooting
 
-## Verify Setup
-
-```bash
-coder whoami
-coder list
-```
+| Issue | Fix |
+|-------|-----|
+| CLI not installed | `./scripts/setup.sh` |
+| Version mismatch | `./scripts/setup.sh` |
+| Auth failed | `./scripts/authenticate.sh` |
 
 ## Workspace Commands
 
@@ -61,58 +60,50 @@ coder logs <workspace> -f
 
 Coder Tasks runs AI agents (Claude Code, Aider, etc.) in isolated workspaces.
 
-### Create a Task
+### Task Creation Workflow
 
-Most templates require a preset:
+Creating a task requires a **template** and usually a **preset**. Follow these steps:
 
-```bash
-coder task create \
-  --template <template-name> \
-  --preset "<preset-name>" \
-  "Your prompt here"
-```
-
-### List Templates
+#### Step 1: List Available Templates
 
 ```bash
 coder templates list
 ```
 
+#### Step 2: Find Presets for a Template
+
+```bash
+./scripts/list-presets.sh <template-name>
+```
+
+#### Step 3: Create the Task
+
+```bash
+coder tasks create \
+  --template <template-name> \
+  --preset "<preset-name>" \
+  "Your prompt describing what the agent should do"
+```
+
 ### Task Commands
 
 ```bash
-coder task list
-coder task status <task-name>
-coder task logs <task-name>
-coder task send <task-name> "Additional context"
-coder task delete <task-name>
+coder tasks list                           # List all tasks
+coder tasks                                # Same as list
+coder tasks logs <task-name>               # View task output
+coder tasks connect <task-name>            # Interactive session
 ```
 
-### Task Startup Timing
+### Task States
 
 Tasks take 1-3 minutes to start:
 
 - **Initializing** (30-120s): Workspace provisioning
-- **Working** (varies): Setup script running
-- **Active**: Agent processing
+- **Working**: Setup script running
+- **Active**: Agent processing your prompt
 - **Idle**: Agent waiting for input
-
-## Troubleshooting
-
-```bash
-# Check workspace status
-coder list --search "name:<workspace>" -o json
-
-# View build logs
-coder logs <workspace>
-
-# Test connectivity
-coder ping <workspace>
-
-# Restart unhealthy workspace
-coder restart <workspace> -y
-```
 
 ## More Info
 
-https://coder.com/docs/cli
+- [Coder Docs](https://coder.com/docs)
+- [Coder Tasks](https://coder.com/docs/ai-coder)

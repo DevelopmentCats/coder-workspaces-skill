@@ -7,47 +7,41 @@ Manage [Coder](https://coder.com) workspaces and AI coding agent tasks from your
 - **Workspaces**: List, create, start, stop, restart, delete
 - **Remote Commands**: SSH into workspaces and run commands
 - **AI Tasks**: Create and manage Coder Tasks with Claude Code, Aider, Goose, etc.
-- **Monitoring**: View logs, check status, troubleshoot issues
+- **Self-Healing**: Diagnose and fix CLI issues automatically
 
 ## Prerequisites
 
 1. Access to a Coder deployment (self-hosted or Coder Cloud)
-2. Coder CLI installed and authenticated
-3. Environment variables configured
+2. Environment variables configured
 
 ## Setup
 
-### 1. Install the Coder CLI
+### 1. Set Environment Variables
 
-Download from [GitHub Releases](https://github.com/coder/coder/releases) or see [installation docs](https://coder.com/docs/install).
+Add to your OpenClaw config (`~/.openclaw/openclaw.json`):
 
-Verify:
-```bash
-coder version
-```
-
-### 2. Authenticate
-
-```bash
-coder login https://your-coder-deployment.com
-```
-
-### 3. Set Environment Variables
-
-Add to your shell profile:
-
-```bash
-export CODER_URL="https://your-coder-deployment.com"
-export CODER_SESSION_TOKEN="your-session-token"
+```json
+{
+  "env": {
+    "CODER_URL": "https://your-coder-deployment.com",
+    "CODER_SESSION_TOKEN": "your-session-token"
+  }
+}
 ```
 
 Get a token at `https://your-coder-deployment.com/cli-auth` or `/settings/tokens`.
 
-### 4. Verify
+### 2. Install and Authenticate
+
+```bash
+./scripts/setup.sh        # Install CLI from your instance
+./scripts/authenticate.sh # Login with your token
+```
+
+### 3. Verify
 
 ```bash
 coder whoami
-coder list
 ```
 
 ## Install the Skill
@@ -55,6 +49,14 @@ coder list
 ```bash
 clawhub install coder-workspaces
 ```
+
+## Helper Scripts
+
+| Script | Purpose |
+|--------|---------|
+| `scripts/setup.sh` | Install/update CLI from instance |
+| `scripts/authenticate.sh` | Login with session token |
+| `scripts/list-presets.sh <template>` | List presets for a template |
 
 ## Usage
 
@@ -66,17 +68,19 @@ Ask your OpenClaw agent things like:
 - "Check status of my running tasks"
 - "SSH into backend and run the tests"
 
-## Notes
+## Troubleshooting
 
-- Most task templates require a **preset** for configuration
-- Tasks take 1-3 minutes to start (provisioning + agent init)
+If something breaks:
+
+- CLI missing or version mismatch → `./scripts/setup.sh`
+- Auth failed → `./scripts/authenticate.sh`
 
 ## Links
 
 - [Coder Docs](https://coder.com/docs)
 - [Coder Tasks](https://coder.com/docs/ai-coder)
 - [OpenClaw](https://openclaw.ai)
-- [ClawHub](https://clawhub.ai)
+- [ClawHub](https://clawhub.com)
 
 ## License
 
