@@ -3,7 +3,7 @@ name: Publish to ClawHub
 on:
   push:
     tags:
-      - 'v*'  # Triggers on v1.0.0, v1.2.3, etc.
+      - 'v*'
 
 permissions:
   contents: write
@@ -25,61 +25,63 @@ jobs:
 
       - name: Extract version from tag
         id: version
-        run: echo "VERSION=${GITHUB_REF#refs/tags/v}" >> $GITHUB_OUTPUT
+        run: |
+          VERSION="${GITHUB_REF#refs/tags/v}"
+          echo "VERSION=$VERSION" >> $GITHUB_OUTPUT
+          echo "Extracted version: $VERSION"
 
       - name: Extract changelog for version
         id: changelog
         run: |
           VERSION="${{ steps.version.outputs.VERSION }}"
+          echo "Looking for changelog section: [$VERSION]"
           
-          # Extract the section for this version from CHANGELOG.md
-          # Looks for ## [X.Y.Z] and captures until the next ## [ or end of file
+          # Extract section between ## [VERSION] and next ## [ or end of file
           CHANGELOG=$(awk -v ver="$VERSION" '
+            BEGIN { found=0 }
+            /^## \[Unreleased\]/ { next }
             /^## \[/ {
-              if (found) exit
-              if ($0 ~ "\\[" ver "\\]") found=1
-              next
+              if (found) { exit }
+              if (index($0, "[" ver "]")) { found=1; next }
             }
-            found { print }
-          ' CHANGELOG.md)
+            found && /^[^#]/ { print }
+            found && /^### / { print }
+          ' CHANGELOG.md | sed '/^$/d' | head -50)
           
-          # Fallback if no changelog found
           if [ -z "$CHANGELOG" ]; then
             CHANGELOG="Release v$VERSION"
+            echo "No changelog found, using default"
+          else
+            echo "Found changelog:"
+            echo "$CHANGELOG"
           fi
           
-          # Output for GitHub Actions (handle multiline)
-          echo "CHANGELOG<<EOF" >> $GITHUB_OUTPUT
-          echo "$CHANGELOG" >> $GITHUB_OUTPUT
-          echo "EOF" >> $GITHUB_OUTPUT
+          # Write to file to avoid escaping issues
+          echo "$CHANGELOG" > /tmp/changelog.txt
 
       - name: Publish to ClawHub
         env:
           CLAWHUB_TOKEN: ${{ secrets.CLAWHUB_TOKEN }}
-          CHANGELOG_TEXT: ${{ steps.changelog.outputs.CHANGELOG }}
         run: |
           clawhub login --token "$CLAWHUB_TOKEN" --no-browser
+          CHANGELOG=$(cat /tmp/changelog.txt)
           clawhub publish . \
             --slug coder-workspaces \
             --name "Coder Workspaces" \
             --version "${{ steps.version.outputs.VERSION }}" \
-            --changelog "$CHANGELOG_TEXT"
+            --changelog "$CHANGELOG"
 
       - name: Create GitHub Release
         uses: softprops/action-gh-release@v1
         with:
-          body: ${{ steps.changelog.outputs.CHANGELOG }}
+          body_path: /tmp/changelog.txt
           generate_release_notes: false
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Summary
         run: |
-          echo "## ✅ Published to ClawHub" >> $GITHUB_STEP_SUMMARY
+          echo "## ✅ Published coder-workspaces@${{ steps.version.outputs.VERSION }}" >> $GITHUB_STEP_SUMMARY
           echo "" >> $GITHUB_STEP_SUMMARY
-          echo "- **Skill:** coder-workspaces" >> $GITHUB_STEP_SUMMARY
-          echo "- **Version:** ${{ steps.version.outputs.VERSION }}" >> $GITHUB_STEP_SUMMARY
-          echo "- **View:** https://clawhub.ai/skills/coder-workspaces" >> $GITHUB_STEP_SUMMARY
+          echo "**ClawHub:** https://clawhub.ai/skills/coder-workspaces" >> $GITHUB_STEP_SUMMARY
           echo "" >> $GITHUB_STEP_SUMMARY
           echo "### Changelog" >> $GITHUB_STEP_SUMMARY
-          echo "${{ steps.changelog.outputs.CHANGELOG }}" >> $GITHUB_STEP_SUMMARY
+          cat /tmp/changelog.txt >> $GITHUB_STEP_SUMMARY
