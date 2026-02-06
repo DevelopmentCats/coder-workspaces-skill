@@ -7,6 +7,21 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [1.2.0] - 2026-02-06
+
+### Changed
+- Restructured skill to separate agent instructions from setup documentation
+- Setup instructions moved to README.md (for humans)
+- SKILL.md now assumes coder CLI is pre-installed and authenticated
+
+### Removed
+- Helper script with curl commands (security scanner flagged patterns)
+- Reference files with API examples (redundant with official Coder docs)
+
+### Security
+- Removed all curl and credential-sending patterns from agent-loaded files
+- Skill no longer contains install or authentication instructions
+
 ## [1.1.0] - 2026-02-06
 
 ### Added
