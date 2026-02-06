@@ -53,13 +53,14 @@ jobs:
       - name: Publish to ClawHub
         env:
           CLAWHUB_TOKEN: ${{ secrets.CLAWHUB_TOKEN }}
+          CHANGELOG_TEXT: ${{ steps.changelog.outputs.CHANGELOG }}
         run: |
           clawhub login --token "$CLAWHUB_TOKEN" --no-browser
           clawhub publish . \
             --slug coder-workspaces \
             --name "Coder Workspaces" \
             --version "${{ steps.version.outputs.VERSION }}" \
-            --changelog "${{ steps.changelog.outputs.CHANGELOG }}"
+            --changelog "$CHANGELOG_TEXT"
 
       - name: Create GitHub Release
         uses: softprops/action-gh-release@v1
