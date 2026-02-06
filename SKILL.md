@@ -19,30 +19,89 @@ metadata:
 
 Interact with Coder workspaces and AI coding agent tasks via the Coder CLI.
 
-## Configuration
+## Setup Guide
 
-Set environment variables (preferred):
+This skill requires the Coder CLI and authentication tokens. Follow these steps to configure.
 
-```bash
-export CODER_URL="https://coder.example.com"
-export CODER_SESSION_TOKEN="your-session-token"
-```
-
-Or use flags: `--url <url> --token <token>`
-
-**Get a token:** Visit `https://<your-coder-url>/cli-auth` or create at `/settings/tokens`
-
-## CLI Installation
+### Step 1: Install the Coder CLI
 
 ```bash
-# Install from your Coder instance (matches server version)
+# Option A: From your Coder instance (recommended - matches server version)
 curl -fsSL https://<your-coder-url>/install.sh | sh
 
-# Or standalone (may have version mismatch warnings)
+# Option B: Standalone (universal, may show version warnings)
 curl -fsSL https://coder.com/install.sh | sh -s -- --method standalone --prefix ~/.local
 ```
 
-**Note:** Version mismatches between client/server usually work but show warnings.
+Verify installation: `coder version`
+
+### Step 2: Get Your Coder URL
+
+Your Coder URL is the base URL of your Coder deployment:
+- Self-hosted: `https://coder.yourcompany.com`
+- Coder Cloud: `https://yourorg.coder.app`
+
+### Step 3: Get an Authentication Token
+
+Choose one method:
+
+**Method A — CLI Login (Interactive)**
+```bash
+coder login https://your-coder-url.com
+# Opens browser for authentication, stores token automatically
+```
+
+**Method B — Web UI Quick Auth**
+1. Visit `https://<your-coder-url>/cli-auth`
+2. Click "Create token"
+3. Copy the token
+
+**Method C — Create Long-Lived Token**
+1. Visit `https://<your-coder-url>/settings/tokens`
+2. Click "Generate token"
+3. Give it a name and expiration
+4. Copy the token
+
+### Step 4: Configure Environment Variables
+
+Add to your shell profile (`~/.bashrc` or `~/.zshrc`):
+
+```bash
+export CODER_URL="https://your-coder-url.com"
+export CODER_SESSION_TOKEN="your-token-here"
+```
+
+Then reload: `source ~/.bashrc`
+
+### Step 5: Verify Setup
+
+```bash
+# Check authentication
+coder whoami
+
+# List workspaces
+coder list
+```
+
+### Agent Setup Workflow
+
+When helping a user configure this skill, follow this checklist:
+
+1. **Check if coder CLI exists:** `which coder`
+2. **Check environment variables:** `echo $CODER_URL && echo $CODER_SESSION_TOKEN | head -c 10`
+3. **If missing URL:** Ask user for their Coder deployment URL
+4. **If missing token:** Guide user to create one via `/cli-auth` or `/settings/tokens`
+5. **Test connection:** `coder whoami`
+6. **Persist config:** Help add exports to shell profile
+
+### Troubleshooting Auth Issues
+
+| Symptom | Cause | Fix |
+|---------|-------|-----|
+| "not logged in" | Missing/invalid token | Re-run `coder login` or create new token |
+| "connection refused" | Wrong URL or network | Verify CODER_URL is accessible |
+| "unauthorized" | Expired token | Create new token at `/settings/tokens` |
+| Version warnings | Client/server mismatch | Install from your Coder instance URL |
 
 ## Core Workspace Commands
 
