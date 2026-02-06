@@ -7,6 +7,14 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [1.2.1] - 2026-02-06
+
+### Changed
+- Cleaned up description to remove implementation details
+- Simplified README with cleaner formatting
+- Replaced table with bullet list for task timing
+- Removed redundant sections and improved readability
+
 ## [1.2.0] - 2026-02-06
 
 ### Changed
