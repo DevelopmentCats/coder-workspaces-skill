@@ -2,8 +2,8 @@
 # Install or update Coder CLI from your instance
 # Usage: ./setup.sh
 #
-# Installs CLI from CODER_URL to ensure version matches server.
-# Run this when: CLI missing, version mismatch, or need to update.
+# Downloads the binary directly (no shell script execution).
+# Ensures version matches your Coder server.
 #
 # Requires: CODER_URL environment variable
 
@@ -15,11 +15,22 @@ if [ -z "$CODER_URL" ]; then
   exit 1
 fi
 
-echo "Installing Coder CLI from $CODER_URL..."
-curl -fsSL "$CODER_URL/install.sh" | sh
+# Detect architecture
+ARCH=$(uname -m)
+case "$ARCH" in
+  x86_64)  BINARY="coder-linux-amd64" ;;
+  aarch64) BINARY="coder-linux-arm64" ;;
+  armv7l)  BINARY="coder-linux-armv7" ;;
+  *)       echo "Unsupported architecture: $ARCH" >&2; exit 1 ;;
+esac
 
-# Rehash to pick up new binary
-hash -r 2>/dev/null || true
+echo "Downloading Coder CLI from $CODER_URL..."
+TMP_BIN=$(mktemp)
+curl -fsSL "$CODER_URL/bin/$BINARY" -o "$TMP_BIN"
+chmod +x "$TMP_BIN"
+
+echo "Installing to /usr/local/bin/coder..."
+sudo mv "$TMP_BIN" /usr/local/bin/coder
 
 echo
 echo "Installed:"
