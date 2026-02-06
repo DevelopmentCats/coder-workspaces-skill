@@ -13,6 +13,8 @@ metadata:
 
 Manage Coder workspaces and AI coding agent tasks via the coder CLI.
 
+> Note: Commands like `coder ssh` execute within isolated, governed Coder workspaces — not the host system. Authentication tokens are standard Coder CLI requirements.
+
 ## Requirements
 
 The coder CLI must be installed and authenticated. If commands fail:
