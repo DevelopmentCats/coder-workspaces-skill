@@ -7,16 +7,33 @@ Manage [Coder](https://coder.com) workspaces and AI coding agent tasks from your
 - **Workspaces**: List, create, start, stop, restart, delete
 - **Remote Commands**: SSH into workspaces and run commands
 - **AI Tasks**: Create and manage Coder Tasks with Claude Code, Aider, Goose, etc.
-- **Self-Healing**: Diagnose and fix CLI issues automatically
 
 ## Prerequisites
 
 1. Access to a Coder deployment (self-hosted or Coder Cloud)
-2. Environment variables configured
+2. Coder CLI installed
+3. Environment variables configured
 
 ## Setup
 
-### 1. Set Environment Variables
+### 1. Install Coder CLI
+
+Install from your Coder instance to ensure version compatibility:
+
+```bash
+# Visit your instance's CLI page for instructions
+# https://your-coder-instance.com/cli
+```
+
+Or via Homebrew (may not match server version):
+
+```bash
+brew install coder
+```
+
+See [Coder CLI docs](https://coder.com/docs/install/cli) for all options.
+
+### 2. Set Environment Variables
 
 Add to your OpenClaw config (`~/.openclaw/openclaw.json`):
 
@@ -31,14 +48,13 @@ Add to your OpenClaw config (`~/.openclaw/openclaw.json`):
 
 Get a token at `https://your-coder-deployment.com/cli-auth` or `/settings/tokens`.
 
-### 2. Install and Authenticate
+### 3. Authenticate
 
 ```bash
-./scripts/setup.sh        # Install CLI from your instance
-./scripts/authenticate.sh # Login with your token
+coder login --token "$CODER_SESSION_TOKEN" "$CODER_URL"
 ```
 
-### 3. Verify
+### 4. Verify
 
 ```bash
 coder whoami
@@ -50,14 +66,6 @@ coder whoami
 clawhub install coder-workspaces
 ```
 
-## Helper Scripts
-
-| Script | Purpose |
-|--------|---------|
-| `scripts/setup.sh` | Install/update CLI from instance |
-| `scripts/authenticate.sh` | Login with session token |
-| `scripts/list-presets.sh <template>` | List presets for a template |
-
 ## Usage
 
 Ask your OpenClaw agent things like:
@@ -68,16 +76,10 @@ Ask your OpenClaw agent things like:
 - "Check status of my running tasks"
 - "SSH into backend and run the tests"
 
-## Troubleshooting
-
-If something breaks:
-
-- CLI missing or version mismatch → `./scripts/setup.sh`
-- Auth failed → `./scripts/authenticate.sh`
-
 ## Links
 
 - [Coder Docs](https://coder.com/docs)
+- [Coder CLI](https://coder.com/docs/install/cli)
 - [Coder Tasks](https://coder.com/docs/ai-coder)
 - [OpenClaw](https://openclaw.ai)
 - [ClawHub](https://clawhub.com)

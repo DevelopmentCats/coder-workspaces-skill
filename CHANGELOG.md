@@ -7,6 +7,18 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [1.5.0] - 2026-02-06
+
+### Removed
+- `scripts/setup.sh` — CLI installation is now user responsibility (see docs)
+- `scripts/authenticate.sh` — login command documented in SKILL.md instead
+- `scripts/list-presets.sh` — presets visible in Coder web UI
+
+### Changed
+- Skill now follows standard pattern: documents usage, doesn't install software
+- Added `metadata.openclaw.install` for brew install hint
+- No scripts remain — pure documentation skill
+
 ## [1.4.1] - 2026-02-06
 
 ### Changed
